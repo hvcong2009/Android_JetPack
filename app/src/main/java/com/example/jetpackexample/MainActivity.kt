@@ -6,21 +6,26 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -33,6 +38,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import com.example.jetpackexample.ui.theme.JetpackExampleTheme
 
 class MainActivity : ComponentActivity() {
@@ -98,15 +104,39 @@ fun HomeScreen() {
 //            Spacer(modifier = Modifier.height(15.dp))
 //        }
 
-            Column(modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally) {
-                ImageCircleCompose()
-                Spacer(modifier = Modifier.height(15.dp))
-                ImageCircleShadowCompose()
-                Spacer(modifier = Modifier.height(15.dp))
-                ImageShadowCompose()
-        }
+//            Column(modifier = Modifier.fillMaxWidth(),
+//            horizontalAlignment = Alignment.CenterHorizontally) {
+//                ImageCircleCompose()
+//                Spacer(modifier = Modifier.height(10.dp))
+//                ImageCircleShadowCompose()
+//                Spacer(modifier = Modifier.height(10.dp))
+//                ImageShadowCompose()
+//                Spacer(modifier = Modifier.height(10.dp))
+//                //ImageUrlCompose()
+//        }
         //endregion
+
+        // region_Button
+        SimpleButton()
+        Spacer(modifier = Modifier.height(15.dp))
+        ClickableButton()
+        Spacer(modifier = Modifier.height(15.dp))
+        TapGesturesButton()
+//        Spacer(modifier = Modifier.height(15.dp))
+//        DisableSimpleButton()
+//        Spacer(modifier = Modifier.height(15.dp))
+//        RoundedCornerButton()
+//        Spacer(modifier = Modifier.height(15.dp))
+//        BorderSimpleButton()
+//        Spacer(modifier = Modifier.height(15.dp))
+//        ElevationSimpleButton()
+//        Spacer(modifier = Modifier.height(15.dp))
+//        OutlineSimpleButton()
+//        Spacer(modifier = Modifier.height(15.dp))
+//        TextSimpleButton()
+//        Spacer(modifier = Modifier.height(15.dp))
+//        IconSimpleButton()
+        // endregion
     }
 }
 
@@ -181,7 +211,8 @@ fun ImageVectorCompose() {
 fun ImageCircleCompose() {
     Image(painterResource(id = R.drawable.city_banner),
         contentDescription = "descriptions",
-        modifier = Modifier.size(200.dp, 200.dp)
+        modifier = Modifier
+            .size(200.dp, 200.dp)
             .border(BorderStroke(2.dp, color = Color.Gray), shape = CircleShape)
             .clip(shape = CircleShape),
         contentScale = ContentScale.FillBounds)
@@ -191,7 +222,8 @@ fun ImageCircleCompose() {
 fun ImageCircleShadowCompose() {
     Image(painterResource(id = R.drawable.city_banner),
         contentDescription = "descriptions",
-        modifier = Modifier.size(200.dp, 200.dp)
+        modifier = Modifier
+            .size(200.dp, 200.dp)
             .border(BorderStroke(2.dp, color = Color.Gray), shape = CircleShape)
             .clip(shape = CircleShape)
             .shadow(elevation = 16.dp, shape = RoundedCornerShape(size = 16.dp)),
@@ -202,9 +234,134 @@ fun ImageCircleShadowCompose() {
 fun ImageShadowCompose() {
     Image(painterResource(id = R.drawable.city_banner),
         contentDescription = "descriptions",
-        modifier = Modifier.fillMaxSize()
-            .shadow(elevation = 16.dp, shape = RoundedCornerShape(size = 16.dp)),
+        modifier = Modifier
+            .size(200.dp, 200.dp)
+            .shadow(elevation = 50.dp, shape = RoundedCornerShape(size = 10.dp))
+            .aspectRatio(2f),
         contentScale = ContentScale.FillBounds)
 }
 
+// https://st.quantrimang.com/photos/image/2021/03/10/Hinh-nen-dep-cute-2.jpg
+@Composable
+fun ImageUrlCompose() {
+    Image(rememberAsyncImagePainter(model = "https://st.quantrimang.com/photos/image/2021/03/10/Hinh-nen-dep-cute-2.jpg",
+    placeholder = painterResource(id = R.drawable.city_banner)),
+        contentDescription = null)
+}
+
+//endregion
+
+//region_Button
+@Composable
+fun ClickableButton() {
+    Text(text = "Click me", modifier = Modifier.clickable {
+        
+    })
+    
+    Column(modifier = Modifier
+        .size(100.dp)
+        .clickable {
+
+        }) {
+        Image(painter = painterResource(id = R.drawable.city_banner), contentDescription = "descriptions")
+        Text(text = "Name")
+    }
+}
+
+@Composable
+fun TapGesturesButton() {
+    val textContent = remember {
+        mutableStateOf("doing...")
+    }
+    
+    Text(text = textContent.value)
+    
+    Text(text = "Action", modifier = Modifier.pointerInput(Unit) {
+        detectTapGestures(onDoubleTap = {
+            textContent.value = "doubleTap"
+        }, onLongPress = {
+            textContent.value = "longPress"
+        }, onPress = {
+            textContent.value = "press"
+        }, onTap = {
+            textContent.value = "tap"
+        })
+    })
+}
+
+@Composable
+fun SimpleButton() {
+    val count = remember {
+        mutableStateOf(0)
+    }
+    Text(text = "Click count ${count.value}")
+    Button(onClick = {
+                     count.value ++
+                     },
+        colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue, contentColor = Color.Black, disabledBackgroundColor = Color.Gray, disabledContentColor = Color.DarkGray)) {
+        Icon(Icons.Default.Add, contentDescription = "descriptions")
+        Text(text = "Add", style = TextStyle(color = Color.White))
+    }
+}
+
+@Composable
+fun DisableSimpleButton() {
+    Button(onClick = { /*TODO*/ },
+        colors = ButtonDefaults.buttonColors(disabledBackgroundColor = Color.Gray, disabledContentColor = Color.DarkGray),
+        enabled = false) {
+        Column() {
+            Icon(Icons.Default.Add, contentDescription = "descriptions")
+            Text(text = "Add", style = TextStyle(color = Color.White))
+        }
+    }
+}
+
+@Composable
+fun RoundedCornerButton() {
+    Button(onClick = { /*TODO*/ },
+        shape = RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp)) {
+        Text(text = "Rounded corner button")
+    }
+}
+
+@Composable
+fun BorderSimpleButton() {
+    Button(onClick = { /*TODO*/ },
+        border = BorderStroke(width = 2.dp, color = Color.Red),
+        colors = ButtonDefaults.buttonColors(backgroundColor = Color.White)
+    ) {
+        Text(text = "Border button", color = Color.Blue)
+    }
+}
+
+@Composable
+fun ElevationSimpleButton() {
+    Button(onClick = { /*TODO*/ },
+        colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+        elevation = ButtonDefaults.elevation(defaultElevation = 15.dp, pressedElevation = 30.dp, disabledElevation = 5.dp)) {
+        Text(text = "Elevation button", color = Color.Cyan)
+    }
+}
+
+@Composable
+fun OutlineSimpleButton() {
+    OutlinedButton(onClick = { /*TODO*/ }) {
+        Text(text = "Outline button", color = Color.Magenta)
+    }
+    
+}
+
+@Composable
+fun TextSimpleButton() {
+    TextButton(onClick = { /*TODO*/ }) {
+        Text(text = "Text button", color = Color.Green)
+    }
+}
+
+@Composable
+fun IconSimpleButton() {
+    IconButton(onClick = { /*TODO*/ }) {
+        Icon(imageVector = Icons.Default.Person, contentDescription = "icon button")
+    }
+}
 //endregion
