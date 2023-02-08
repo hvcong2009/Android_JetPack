@@ -1,6 +1,7 @@
 package com.example.jetpackexample
 
 import android.os.Bundle
+import android.widget.CheckBox
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
@@ -9,16 +10,13 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material.icons.filled.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,6 +27,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -117,11 +116,11 @@ fun HomeScreen() {
         //endregion
 
         // region_Button
-        SimpleButton()
-        Spacer(modifier = Modifier.height(15.dp))
-        ClickableButton()
-        Spacer(modifier = Modifier.height(15.dp))
-        TapGesturesButton()
+//        SimpleButton()
+//        Spacer(modifier = Modifier.height(15.dp))
+//        ClickableButton()
+//        Spacer(modifier = Modifier.height(15.dp))
+//        TapGesturesButton()
 //        Spacer(modifier = Modifier.height(15.dp))
 //        DisableSimpleButton()
 //        Spacer(modifier = Modifier.height(15.dp))
@@ -137,6 +136,23 @@ fun HomeScreen() {
 //        Spacer(modifier = Modifier.height(15.dp))
 //        IconSimpleButton()
         // endregion
+        
+        //region_RadioButton
+//        RadioButtonCompose()
+//        Spacer(modifier = Modifier.height(15.dp))
+//        RadioButtonWithTextTitle("Class 1")
+//        Spacer(modifier = Modifier.height(15.dp))
+//        RadioButtonUseIconCompose("Class 1")
+//        Spacer(modifier = Modifier.height(15.dp))
+//        CustomRadioButton()
+//        Spacer(modifier = Modifier.height(15.dp))
+        //endregion
+
+        //region_CheckBox
+//        CheckBoxWithTitle("Check me")
+//        Spacer(modifier = Modifier.height(15.dp))
+        CheckBoxUseIcon("Check me")
+        //endregion
     }
 }
 
@@ -362,6 +378,105 @@ fun TextSimpleButton() {
 fun IconSimpleButton() {
     IconButton(onClick = { /*TODO*/ }) {
         Icon(imageVector = Icons.Default.Person, contentDescription = "icon button")
+    }
+}
+//endregion
+
+//region_RadioButton
+@Composable
+fun RadioButtonCompose() {
+    RadioButton(selected = true,
+        enabled = true,
+        onClick = { /*TODO*/ },
+        colors = RadioButtonDefaults.colors(selectedColor = Color.Green, unselectedColor = Color.DarkGray, disabledColor = Color.LightGray)
+    )
+    RadioButton(selected = false,
+        enabled = true,
+        onClick = { /*TODO*/ },
+        colors = RadioButtonDefaults.colors(selectedColor = Color.Green, unselectedColor = Color.DarkGray, disabledColor = Color.LightGray)
+    )
+    RadioButton(selected = false,
+        enabled = false,
+        onClick = { /*TODO*/ },
+        colors = RadioButtonDefaults.colors(selectedColor = Color.Green, unselectedColor = Color.DarkGray, disabledColor = Color.LightGray)
+    )
+}
+
+@Composable
+fun RadioButtonWithTextTitle(title:String) {
+    Row() {
+        RadioButton(selected = false,
+            enabled = false,
+            onClick = { /*TODO*/ },
+            colors = RadioButtonDefaults.colors(selectedColor = Color.Green, unselectedColor = Color.DarkGray, disabledColor = Color.LightGray)
+        )
+        Text(text = title)
+    }
+}
+
+@Composable
+fun RadioButtonUseIconCompose(title: String) {
+    var isSelected by remember {
+        mutableStateOf(false)
+    }
+    Row(modifier = Modifier.selectable(
+        selected = true,
+        onClick = {isSelected = !isSelected},
+        role = Role.RadioButton
+    )) {
+        Icon(if(isSelected)Icons.Default.Check else Icons.Default.CheckCircle, contentDescription = "description")
+        Text(text = title)
+    }
+}
+
+@Composable
+fun CustomRadioButton() {
+    val radioButtons = listOf(1,2,3)
+    val selectedButton = remember {
+        mutableStateOf(radioButtons.first())
+    }
+    radioButtons.forEach{
+        val isSelected = it == selectedButton.value
+        val colors = RadioButtonDefaults.colors(selectedColor = Color.Green, unselectedColor = Color.DarkGray, disabledColor = Color.LightGray)
+        RadioButton(selected = isSelected, onClick = { selectedButton.value = it }, colors = colors)
+    }
+}
+//endregion
+
+//region_CheckBox
+@Composable
+fun CheckBoxWithTitle(title: String) {
+    var isChecked by remember {
+        mutableStateOf(true)
+    }
+    Row(modifier = Modifier.selectable(
+        selected = isChecked,
+        onClick = {
+            isChecked = !isChecked
+        },
+        role = Role.Checkbox
+    )) {
+        Checkbox(checked = true, onCheckedChange = {
+
+        }, colors = CheckboxDefaults.colors(checkedColor = Color.Blue, uncheckedColor = Color.Gray))
+        Text(text = title)
+    }
+}
+
+@Composable
+fun CheckBoxUseIcon(title: String) {
+    var isChecked by remember {
+        mutableStateOf(true)
+    }
+    Row(modifier = Modifier.selectable(
+        selected = isChecked,
+        onClick = {
+            isChecked = !isChecked
+        },
+        role = Role.Checkbox
+    )) {
+        Icon(if(isChecked)Icons.Default.Check else Icons.Default.CheckCircle, contentDescription = "description")
+        Text(text = title)
     }
 }
 //endregion
