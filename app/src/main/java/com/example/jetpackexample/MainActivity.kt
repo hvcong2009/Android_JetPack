@@ -1,5 +1,6 @@
 package com.example.jetpackexample
 
+import android.graphics.Paint.Style
 import android.os.Bundle
 import android.widget.CheckBox
 import androidx.activity.ComponentActivity
@@ -13,11 +14,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
@@ -25,12 +29,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
@@ -151,7 +157,15 @@ fun HomeScreen() {
         //region_CheckBox
 //        CheckBoxWithTitle("Check me")
 //        Spacer(modifier = Modifier.height(15.dp))
-        CheckBoxUseIcon("Check me")
+//        CheckBoxUseIcon("Check me")
+        //endregion
+
+        //region_TextField
+        TextFieldCompose()
+        Spacer(modifier = Modifier.height(15.dp))
+        OutlineTextFieldCompose()
+        Spacer(modifier = Modifier.height(15.dp))
+        PasswordTextFieldCompose()
         //endregion
     }
 }
@@ -478,5 +492,88 @@ fun CheckBoxUseIcon(title: String) {
         Icon(if(isChecked)Icons.Default.Check else Icons.Default.CheckCircle, contentDescription = "description")
         Text(text = title)
     }
+}
+//endregion
+
+//region_TextField
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun TextFieldCompose() {
+    var name by remember {
+        mutableStateOf("")
+    }
+
+    val keyBoardController = LocalSoftwareKeyboardController.current
+
+    TextField(
+        value = name,
+        onValueChange = {
+            name = it
+        },
+        textStyle = TextStyle(color = Color.Blue, fontSize = 15.sp, fontWeight = FontWeight.Bold),
+        label = { Text(text = "Name")},
+        placeholder = { Text(text = "Input name") },
+        leadingIcon = { Icon(Icons.Default.Person, contentDescription = "Descriptions") },
+        trailingIcon = {
+            IconButton(onClick = {
+                name = ""
+            }) {
+                Icon(Icons.Default.Clear, contentDescription = "Descriptions")
+            }
+        },
+        colors = TextFieldDefaults.textFieldColors(cursorColor = Color.Yellow,
+            unfocusedIndicatorColor = Color.Transparent,
+            focusedIndicatorColor = Color.Transparent,
+            trailingIconColor = Color.Green,
+            leadingIconColor = Color.Cyan),
+        shape = RoundedCornerShape(25.dp),
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done,
+//                keyboardType = KeyboardType.Phone,
+                // Viết hoa chữ đầu của 1 từ, mỗi từ được xác định bởi khoảng trắng
+                capitalization = KeyboardCapitalization.Words
+            ),
+        keyboardActions = KeyboardActions(onDone = {
+                keyBoardController?.hide()
+            })
+        )
+}
+
+@Composable
+fun OutlineTextFieldCompose() {
+    var email by remember {
+        mutableStateOf("")
+    }
+    OutlinedTextField(value = email,
+        onValueChange = {
+        email = it
+        },
+        label = { Text(text = "Email")},
+        placeholder = { Text(text = "Input Email")},
+        leadingIcon = { Icon(Icons.Default.Email, contentDescription = "Descriptions") }
+    )
+}
+
+@Composable
+fun PasswordTextFieldCompose() {
+    var password by remember {
+        mutableStateOf("")
+    }
+
+    var isShowPassword by remember {
+        mutableStateOf(false)
+    }
+
+    OutlinedTextField(value = password,
+        onValueChange = {
+            password = it
+        },
+        label = { Text(text = "Password")},
+        placeholder = { Text(text = "Input Password")},
+        trailingIcon = { IconButton(onClick = { isShowPassword = !isShowPassword }) {
+                Icon(if(isShowPassword) Icons.Default.Person else Icons.Default.Lock, contentDescription = "Descriptions")
+            }
+        },
+        visualTransformation = if(isShowPassword) VisualTransformation.None else PasswordVisualTransformation()
+    )
 }
 //endregion
